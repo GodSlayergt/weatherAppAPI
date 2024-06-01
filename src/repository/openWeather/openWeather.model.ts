@@ -23,4 +23,7 @@ export type ForecastData = {
 
 export type WeatherData = {
   list: ForecastData[];
+  city:{
+    timezone:number
+  }
 };

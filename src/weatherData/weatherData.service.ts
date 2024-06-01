@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { OpenWeather } from 'src/repository/openWeather/openWeather.service';
 import {
-  WeatherAppContent,
   WeatherAppData,
   WeatherAppModel,
+  WeatherDescription,
   WeatherModelUnit,
   WeatherType,
 } from './weatherData.dto';
@@ -13,6 +13,7 @@ import {
 } from 'src/repository/openWeather/openWeather.model';
 import { DateTime } from 'luxon';
 import { weatherIconMappings } from 'src/repository/openWeather/iconMap';
+import { iconWeatherMap } from 'src/repository/openWeather/weathercode';
 
 @Injectable()
 export class WeatherDataService {
@@ -22,16 +23,18 @@ export class WeatherDataService {
     const data = await this.openWeatherService.getWeatherData(cityName);
 
     const mappedData = this.mapData(data);
-    const content = this.getContent();
     return {
       data: mappedData,
-      content,
     };
   }
 
   private mapData(data: WeatherData): WeatherAppData {
-    // Get the current date
-    const currentDate = DateTime.now();
+
+    const seconds = data.city.timezone;
+    const currentDate = DateTime.now()
+      .setZone('UTC')
+      .plus({ seconds: seconds });
+    console.log(data, seconds, currentDate, 'testing');
 
     // Add one day to the current date to get the next day
     const currentDayString = currentDate.toFormat('yyyy-LL-dd');
@@ -63,35 +66,27 @@ export class WeatherDataService {
   private getPrediction(data: ForecastData[]): WeatherModelUnit[] {
     return data.map((d) => {
       {
+        const weather = this.checkWeather(d);
+
         return {
           temp: this.kelvinToCelsius(d.main.temp).toFixed(2),
-          prediction: this.checkWeather(d),
+          prediction: weather,
+          description: WeatherDescription[weather],
           date: d.dt_txt,
+          icon: d.weather[0].icon,
         };
       }
     });
   }
 
   private checkWeather(d: ForecastData): WeatherType {
-    if (weatherIconMappings[d.weather[0].id.toString()].includes('rain'))
-      return WeatherType.RAIN;
-    if (this.kelvinToCelsius(d.main.temp_max) > 40) return WeatherType.HOT;
-    if (d.wind.speed > 10) return WeatherType.WIND;
-    if (weatherIconMappings[d.weather[0].id.toString()].includes('thunder'))
-      return WeatherType.THUNDER;
-    return WeatherType.SUNNY
+    if (this.kelvinToCelsius(d.main.temp_max) > 40) return WeatherType.Hot;
+    if (d.wind.speed > 10) return WeatherType.Wind;
+
+    return iconWeatherMap[d.weather[0].id];
   }
 
   private kelvinToCelsius(kelvin: number): number {
     return kelvin - 273.15;
-  }
-
-  private getContent(): WeatherAppContent {
-    return {
-      rain: 'Carry umbrella',
-      hot: 'Use sunscreen lotio',
-      wind: 'It’s too windy, watch out!',
-      thunder: 'Don’t step out! A Storm is brewing',
-    };
   }
 }
