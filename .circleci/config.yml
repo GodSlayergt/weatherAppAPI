@@ -1,0 +1,55 @@
+# This config was automatically generated from your source code
+# Stacks detected: deps:node:.,test:jest:
+version: 2.1
+orbs:
+  node: circleci/node@5
+jobs:
+  build_and_test:
+    # Install node dependencies and run tests
+    executor: node/default
+    steps:
+      - checkout
+      - node/install-packages:
+          pkg-manager: npm
+      - run:
+          name: Run tests
+          command: npm run test:cov
+      - run:
+          name: Run Build
+          command: npm run build
+      - run:
+          name: start
+          command: npm run start:prod
+          background: true
+      - run:
+          name: Verify server is running
+          command: sleep 5 && curl -I localhost:3000/weather?city=India
+ 
+  deploy:
+    machine:
+      image: ubuntu-2004:current
+    resource_class: medium
+    steps:
+      - run:
+          name: Deploy API to Render
+          command: |
+            response=$(curl -s -w "%{http_code}" -o response.txt $DEPLOY_URI)
+            response_code=${response:(-3)}
+            if [ $response_code -eq 200 ]; then
+              echo "Deployment successful!"
+              cat response.txt  # Print the response body
+            else
+              echo "Deployment failed with response code: $response_code"
+              cat response.txt  # Print the response body
+              exit 1
+            fi
+workflows:
+  build_and_test_app:
+    jobs:
+      - build_and_test
+      - deploy:
+          requires:
+           - build_and_test
+          filters:
+            branches:
+                only: main
