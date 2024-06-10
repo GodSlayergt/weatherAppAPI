@@ -33,7 +33,7 @@ jobs:
       - run:
           name: Deploy API to Render
           command: |
-            response=$(curl -s -w "%{http_code}" -o response.txt $DEPLOY_URI)
+            response=$(curl -s -w "%{http_code}" -o response.txt https://api.render.com/deploy/srv-cpjm3ho21fec73a0bk70?key=dXEzSn9-0fc)
             response_code=${response:(-3)}
             if [ $response_code -eq 200 ]; then
               echo "Deployment successful!"
