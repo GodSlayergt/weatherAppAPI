@@ -10,4 +10,6 @@ COPY . .
 
 RUN npm run build
 
-RUN npm run start:prod
+EXPOSE 10000
+
+CMD ["node", "dist/main"]
