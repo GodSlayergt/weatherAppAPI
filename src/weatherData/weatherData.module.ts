@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { WeatherDataController } from './weatherData.controller';
 import { WeatherDataService } from './weatherData.service';
-import { OpenWeatherRepo } from 'src/repository/openWeather/openWeather.module';
+import { OpenWeatherRepo } from '../repository/openWeather/openWeather.module';
 
 @Module({
   imports: [OpenWeatherRepo],

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { OpenWeather } from 'src/repository/openWeather/openWeather.service';
+import { OpenWeather } from '../repository/openWeather/openWeather.service';
 import {
   WeatherAppData,
   WeatherAppModel,
@@ -12,8 +12,7 @@ import {
   WeatherData,
 } from 'src/repository/openWeather/openWeather.model';
 import { DateTime } from 'luxon';
-import { weatherIconMappings } from 'src/repository/openWeather/iconMap';
-import { iconWeatherMap } from 'src/repository/openWeather/weathercode';
+import { iconWeatherMap } from '../repository/openWeather/weathercode';
 
 @Injectable()
 export class WeatherDataService {
@@ -21,7 +20,6 @@ export class WeatherDataService {
 
   async getWeatherData(cityName: string): Promise<WeatherAppModel> {
     const data = await this.openWeatherService.getWeatherData(cityName);
-
     const mappedData = this.mapData(data);
     return {
       data: mappedData,
@@ -34,7 +32,6 @@ export class WeatherDataService {
     const currentDate = DateTime.now()
       .setZone('UTC')
       .plus({ seconds: seconds });
-    console.log(data, seconds, currentDate, 'testing');
 
     // Add one day to the current date to get the next day
     const currentDayString = currentDate.toFormat('yyyy-LL-dd');
