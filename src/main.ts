@@ -10,7 +10,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.enableCors({
-    origin: ['http://localhost:3001'],
+    origin: ['https://weatherappui.onrender.com', 'http://localhost:3001'],
   });
   const config = new DocumentBuilder()
     .setTitle('WeatherAPP')
@@ -28,6 +28,8 @@ async function bootstrap() {
 
   const port = process.env.PORT || 10000;
 
-  await app.listen(port,()=>console.log(`Serve is lisetning to port: ${port}`));
+  await app.listen(port, () =>
+    console.log(`Serve is lisetning to port: ${port}`),
+  );
 }
 bootstrap();
