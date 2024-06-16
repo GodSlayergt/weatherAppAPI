@@ -77,7 +77,7 @@ export class WeatherDataService {
   }
 
   private checkWeather(d: ForecastData): WeatherType {
-    if (this.kelvinToCelsius(d.main.temp_max) > 40) return WeatherType.Hot;
+    if (this.kelvinToCelsius(d.main.temp) > 40) return WeatherType.Hot;
     if (d.wind.speed > 10) return WeatherType.Wind;
 
     return iconWeatherMap[d.weather[0].id];
