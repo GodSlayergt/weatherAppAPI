@@ -28,4 +28,4 @@ The WeatherApp API is designed to provide weather information for various cities
 
 ### Architecture Diagram
 
-![WeatherApp Architecture](images/architecture.png)
+![WeatherApp Architecture](./images/architecture.PNG)
