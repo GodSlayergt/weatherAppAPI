@@ -222,7 +222,7 @@ describe('WeatherDataService', () => {
     it('should return Hot if temperature is greater than 40°C', () => {
       const data = {
         dt_txt: '2023-01-02 00:00:00',
-        main: { temp: 290.15, temp_max: 315.15 },
+        main: { temp: 320.15, temp_max: 315.15 },
         weather: [
           { id: 500, icon: '09d', main: 'sunny', description: 'sunny' },
         ],
